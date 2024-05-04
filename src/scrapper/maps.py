@@ -13,7 +13,8 @@ class Maps:
     api_url = "https://serpapi.com/playground?engine=google_maps&q=coffee&ll={}%2C{}%2C14z&hl=en&type=search"
     categories = ["cafeteria"]
     mapData = []
-    jsonName="data.json"
+    jsonName = "data.json"
+    driver = None
 
     def __init__(self):
         options = webdriver.ChromeOptions()
@@ -25,6 +26,8 @@ class Maps:
         self.mapData = json.load(f)
 
     def run(self):
+        self.driver.get(self.api_url.format(self.lat, self.lng))
+
         for category in self.categories:
             url = self.getApiUrl(category)
             self.getData(url)
@@ -47,7 +50,6 @@ class Maps:
                 })
 
     def getApiUrl(self, category):
-        self.driver.get(self.api_url.format(self.lat, self.lng))
         time.sleep(5)
         elem = self.driver.find_element(By.ID, "q")
         elem.clear()
