@@ -14,6 +14,7 @@ class Maps:
     lng = '-99.133209'
     api_url = "https://serpapi.com/playground?engine=google_maps&q=coffee&ll={}%2C{}%2C14z&hl=en&type=search"
     categories = ["cafeteria"]
+    mapData = []
     def __init__(self):
         options = webdriver.ChromeOptions()
         options.add_argument("--disable-blink-features=AutomationControlled")
@@ -27,22 +28,20 @@ class Maps:
             self.getData(url)
             time.sleep(5)
 
+        with open('data.json', 'w') as file:
+            json.dump(self.mapData, file)
+
     def getData(self, url):
         r = requests.get(url)
         data = r.json()
-        mapData = []
 
         for result in data["local_results"]:
-            mapData.append({
+            self.mapData.append({
                 "title": result["title"] if 'title' in result else '',
                 "address": result["address"] if 'address' in result else '',
                 "phone": result["phone"] if 'phone' in result else '',
                 "website": result['website'] if 'website' in result else ''
             })
-        with open('data.json', 'w') as file:
-            json.dump(mapData, file)
-
-
 
     def getApiUrl(self, category):
         self.driver.get(self.api_url.format(self.lat, self.lng))
